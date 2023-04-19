@@ -4,6 +4,7 @@ import com.vanderleik.workshopmongo.domain.User;
 import com.vanderleik.workshopmongo.dto.UserDTO;
 import com.vanderleik.workshopmongo.repository.UserRepository;
 import com.vanderleik.workshopmongo.services.exception.ObjectNotFoundException;
+import com.vanderleik.workshopmongo.utils.TranslationsConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,7 +55,7 @@ class UserServiceTest {
         Mockito.when(repo.findById(Mockito.anyString())).thenReturn(Optional.ofNullable(null));
 
         ObjectNotFoundException ex = assertThrows(ObjectNotFoundException.class, () -> userService.findById(user.getId()));
-        assertEquals("Objeto não encontrado", ex.getMessage());
+        assertEquals(TranslationsConstants.OBJETO_NAO_ENCONTRADO, ex.getMessage());
     }
 
     @Test
@@ -98,8 +99,8 @@ class UserServiceTest {
     void testInsertObjNull(){
         user = null;
 
-        assertDoesNotThrow(() ->userService.insert(user));
-        Mockito.verify(repo).insert(user);
+        User userInserido = assertDoesNotThrow(() -> userService.insert(user));
+        assertNull(userInserido);
     }
 
     @Test
@@ -116,5 +117,15 @@ class UserServiceTest {
 
         User user = assertDoesNotThrow(() -> userService.fromDTO(objDto));
         assertNull(user);
+    }
+
+    @Test
+    void testDelete(){
+        Mockito.when(repo.findById(Mockito.anyString())).thenReturn(Optional.of(user));
+        assertDoesNotThrow(() -> userService.delete(user.getId()));
+
+        Mockito.when(repo.findById(Mockito.anyString())).thenReturn(Optional.ofNullable(null));
+        ObjectNotFoundException ex = assertThrows(ObjectNotFoundException.class, () -> userService.delete(user.getId()));
+        assertEquals(TranslationsConstants.OBJETO_NAO_ENCONTRADO, ex.getMessage());
     }
 }

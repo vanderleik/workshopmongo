@@ -4,6 +4,7 @@ import com.vanderleik.workshopmongo.domain.User;
 import com.vanderleik.workshopmongo.dto.UserDTO;
 import com.vanderleik.workshopmongo.repository.UserRepository;
 import com.vanderleik.workshopmongo.services.exception.ObjectNotFoundException;
+import com.vanderleik.workshopmongo.utils.TranslationsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class UserService {
 
     public User findById(String id) {
         Optional<User> obj = repo.findById(id);
-        return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado"));
+        return obj.orElseThrow(() -> new ObjectNotFoundException(TranslationsConstants.OBJETO_NAO_ENCONTRADO));
     }
 
     public User insert(User obj) {
@@ -31,6 +32,11 @@ public class UserService {
             return null;
         }
         return repo.insert(obj);
+    }
+
+    public void delete(String id) {
+        findById(id);
+        repo.deleteById(id);
     }
 
     public User fromDTO(UserDTO objDto) {
