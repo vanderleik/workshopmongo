@@ -128,4 +128,20 @@ class UserServiceTest {
         ObjectNotFoundException ex = assertThrows(ObjectNotFoundException.class, () -> userService.delete(user.getId()));
         assertEquals(TranslationsConstants.OBJETO_NAO_ENCONTRADO, ex.getMessage());
     }
+
+    @Test
+    void testUpdade(){
+        user.setId("456");
+        user.setName("Nome Antigo");
+        user.setEmail("email@Antigo.com");
+
+        User newUser = new User();
+        newUser.setId(user.getId());
+        newUser.setName("Novo Nome");
+        newUser.setEmail("novo.nome@email.com");
+
+        Mockito.when(repo.findById(user.getId())).thenReturn(Optional.of(newUser));
+        assertDoesNotThrow(() -> userService.update(user));
+        Mockito.verify(repo).save(newUser);
+    }
 }
