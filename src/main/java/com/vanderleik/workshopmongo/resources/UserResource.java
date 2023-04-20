@@ -1,5 +1,6 @@
 package com.vanderleik.workshopmongo.resources;
 
+import com.vanderleik.workshopmongo.domain.Post;
 import com.vanderleik.workshopmongo.domain.User;
 import com.vanderleik.workshopmongo.dto.UserDTO;
 import com.vanderleik.workshopmongo.services.UserService;
@@ -37,6 +38,7 @@ public class UserResource {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity deleteById(@PathVariable String id) {
         service.delete(id);
+
         return ResponseEntity.noContent().build();
     }
 
@@ -54,7 +56,15 @@ public class UserResource {
         User obj = service.fromDTO(objDto);
         obj.setId(id);
         obj = service.update(obj);
+
         return ResponseEntity.noContent().build();
+    }
+
+    @RequestMapping(value = "/{id}/posts", method = RequestMethod.GET)
+    public ResponseEntity<List<Post>> findPosts(@PathVariable String id) {
+        User obj = service.findById(id);
+
+        return ResponseEntity.ok().body(obj.getPosts());
     }
 
 }
